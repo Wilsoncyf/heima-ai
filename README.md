@@ -75,18 +75,26 @@ mysql -u root -p -e "CREATE DATABASE itheima CHARACTER SET utf8mb4 COLLATE utf8m
 mysql -u root -p itheima < create_learning_progress_table.sql
 ```
 
-3. **配置文件**
-```yaml
-# 修改 src/main/resources/application.yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/itheima
-    username: your_username
-    password: your_password
-  ai:
-    openai:
-      api-key: your_api_key
+3. **环境变量配置**
+```bash
+# 复制环境变量模板文件
+cp .env.example .env
+
+# 编辑 .env 文件，填入真实配置
+# 必需配置：
+OPENAI_API_KEY=your_actual_api_key_here
+DATABASE_PASSWORD=your_database_password
+
+# 可选配置（已有默认值）：
+DATABASE_USERNAME=root
+DATABASE_URL=jdbc:mysql://localhost:3306/itheima...
+OPENAI_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode
 ```
+
+**⚠️ 安全提醒**: 
+- 请勿将真实的 API Key 提交到 Git 仓库
+- `.env` 文件已添加到 `.gitignore` 中
+- 建议定期更换 API Key
 
 4. **启动应用**
 ```bash
@@ -194,6 +202,39 @@ mvn test -Dtest=LearningProgressMcpToolTest
 
 ## 🔧 配置说明
 
+### 环境变量配置详解
+
+项目使用环境变量来管理敏感配置，确保安全性。所有配置项都在 `.env.example` 文件中有详细说明。
+
+#### 必需的环境变量
+```bash
+# OpenAI API Key (阿里云 DashScope)
+OPENAI_API_KEY=sk-xxxxxxxxxx
+
+# 数据库密码
+DATABASE_PASSWORD=your_password
+```
+
+#### 可选的环境变量 (有默认值)
+```bash
+# AI 服务配置
+OPENAI_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode
+OPENAI_CHAT_MODEL=qwen-max-latest
+OPENAI_EMBEDDING_MODEL=text-embedding-v3
+
+# 数据库配置
+DATABASE_USERNAME=root
+DATABASE_URL=jdbc:mysql://...
+
+# 本地 Ollama 配置
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=deepseek-r1:1.5b
+
+# 日志级别
+LOG_LEVEL_AI=debug
+LOG_LEVEL_APP=debug
+```
+
 ### AI 模型配置
 - **通用聊天**: qwen-omni-turbo (阿里云)
 - **本地模型**: deepseek-r1:1.5b (Ollama)
@@ -203,6 +244,13 @@ mvn test -Dtest=LearningProgressMcpToolTest
 - **传输协议**: STDIO
 - **服务器名称**: heima-ai-mcp-server
 - **版本**: 1.0.0
+
+### 🔒 安全最佳实践
+1. **永远不要将 API Key 硬编码在代码中**
+2. **使用环境变量管理敏感信息**
+3. **定期更换 API Key**
+4. **生产环境使用强密码**
+5. **确保 `.env` 文件不被提交到 Git**
 
 ## 🤝 贡献指南
 
